@@ -35,7 +35,7 @@
 
 // Component parameters to override
 //#define V_REG				3.3
-#define VIN_R1				39000.0
+// #define VIN_R1				39000.0
 //#define VIN_R2				2200.0
 //#define CURRENT_AMP_GAIN	10.0
 //#define CURRENT_SHUNT_RES	0.001
@@ -47,9 +47,9 @@
  * Select only one hardware version
  */
 //#define HW_VERSION_BW
-//#define HW_VERSION_40
+#define HW_VERSION_40
 //#define HW_VERSION_45
-#define HW_VERSION_46
+// #define HW_VERSION_46
 //#define HW_VERSION_R2
 //#define HW_VERSION_VICTOR_R1A
 
@@ -57,7 +57,7 @@
  * Select only one (default) motor configuration
  */
 //#define MCCONF_OUTRUNNER1
-#define MCCONF_OUTRUNNER2
+//#define MCCONF_OUTRUNNER2
 //#define MCCONF_OUTRUNNER_OR
 //#define MCCONF_OUTRUNNER_BL
 //#define MCCONF_RCCAR1
@@ -65,6 +65,8 @@
 //#define MCCONF_STEN
 //#define MCCONF_GURGALOF
 //#define MCCONF_HDD
+
+#define MCCONF_GENERIC_DC_MOTOR    MOTOR_TYPE_DC
 
 /*
  * Select which custom application to use. To configure the default applications and

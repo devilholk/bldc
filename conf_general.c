@@ -16,91 +16,96 @@
 
 // Default configuration file
 #ifdef MCCONF_OUTRUNNER1
-#include "mcconf_outrunner1.h"
+	#include "mcconf_outrunner1.h"
 #elif defined MCCONF_OUTRUNNER2
-#include "mcconf_outrunner2.h"
+	#include "mcconf_outrunner2.h"
 #elif defined MCCONF_OUTRUNNER_OR
-#include "mcconf_outrunner_or.h"
+	#include "mcconf_outrunner_or.h"
 #elif defined MCCONF_OUTRUNNER_BL
-#include "mcconf_outrunner_bl.h"
+	#include "mcconf_outrunner_bl.h"
 #elif defined MCCONF_RCCAR1
-#include "mcconf_rccar1.h"
+	#include "mcconf_rccar1.h"
 #elif defined MCCONF_RCCAR2
-#include "mcconf_rccar2.h"
+	#include "mcconf_rccar2.h"
 #elif defined MCCONF_STEN
-#include "mcconf_sten.h"
+	#include "mcconf_sten.h"
 #elif defined MCCONF_GURGALOF
-#include "mcconf_gurgalof.h"
+	#include "mcconf_gurgalof.h"
 #elif defined MCCONF_HDD
-#include "mcconf_hdd.h"
+	#include "mcconf_hdd.h"
+#elif defined MCCONF_GENERIC_DC_MOTOR
+	#include "mcconf_generic_dc.h"
 #endif
 
 // Parameters that can be overridden
+#ifndef MC_DEFAULT_MOTOR_TYPE
+	#define MC_DEFAULT_MOTOR_TYPE			MOTOR_TYPE_BLDC
+#endif
 #ifndef MCPWM_PWM_MODE
-#define MCPWM_PWM_MODE					PWM_MODE_SYNCHRONOUS // Default PWM mode
+	#define MCPWM_PWM_MODE					PWM_MODE_SYNCHRONOUS // Default PWM mode
 #endif
 #ifndef MCPWM_HALL_DIR
-#define MCPWM_HALL_DIR					0		// Hall sensor direction [0 or 1]
+	#define MCPWM_HALL_DIR					0		// Hall sensor direction [0 or 1]
 #endif
 #ifndef MCPWM_HALL_FWD_ADD
-#define MCPWM_HALL_FWD_ADD				0		// Hall sensor offset fwd [0 to 5]
+	#define MCPWM_HALL_FWD_ADD				0		// Hall sensor offset fwd [0 to 5]
 #endif
 #ifndef MCPWM_HALL_REV_ADD
-#define MCPWM_HALL_REV_ADD				0		// Hall sensor offset rev [0 to 5]
+	#define MCPWM_HALL_REV_ADD				0		// Hall sensor offset rev [0 to 5]
 #endif
 #ifndef MCPWM_MIN_VOLTAGE
-#define MCPWM_MIN_VOLTAGE				8.0		// Minimum input voltage
+	#define MCPWM_MIN_VOLTAGE				8.0		// Minimum input voltage
 #endif
 #ifndef MCPWM_MAX_VOLTAGE
-#define MCPWM_MAX_VOLTAGE				50.0	// Maximum input voltage
+	#define MCPWM_MAX_VOLTAGE				50.0	// Maximum input voltage
 #endif
 #ifndef MCPWM_RPM_MAX
-#define MCPWM_RPM_MAX					100000.0	// The motor speed limit (Upper)
+	#define MCPWM_RPM_MAX					100000.0	// The motor speed limit (Upper)
 #endif
 #ifndef MCPWM_RPM_MIN
-#define MCPWM_RPM_MIN					-100000.0	// The motor speed limit (Lower)
+	#define MCPWM_RPM_MIN					-100000.0	// The motor speed limit (Lower)
 #endif
 #ifndef MCPWM_CURRENT_STARTUP_BOOST
-#define MCPWM_CURRENT_STARTUP_BOOST		0.01	// The lowest duty cycle to use in current control mode (has to be > MCPWM_MIN_DUTY_CYCLE)
+	#define MCPWM_CURRENT_STARTUP_BOOST		0.01	// The lowest duty cycle to use in current control mode (has to be > MCPWM_MIN_DUTY_CYCLE)
 #endif
 #ifndef MCPWM_RPM_LIMIT_NEG_TORQUE
-#define MCPWM_RPM_LIMIT_NEG_TORQUE		true		// Use negative torque to limit the RPM
+	#define MCPWM_RPM_LIMIT_NEG_TORQUE		true		// Use negative torque to limit the RPM
 #endif
 #ifndef MCPWM_CURR_MAX_RPM_FBRAKE
-#define MCPWM_CURR_MAX_RPM_FBRAKE		300	// Maximum electrical RPM to use full brake at
+	#define MCPWM_CURR_MAX_RPM_FBRAKE		300	// Maximum electrical RPM to use full brake at
 #endif
 #ifndef MCPWM_CURR_MAX_RPM_FBRAKE_CC
-#define MCPWM_CURR_MAX_RPM_FBRAKE_CC	1500	// Maximum electrical RPM to use full brake at with current control
+	#define MCPWM_CURR_MAX_RPM_FBRAKE_CC	1500	// Maximum electrical RPM to use full brake at with current control
 #endif
 #ifndef MCPWM_SLOW_ABS_OVERCURRENT
-#define MCPWM_SLOW_ABS_OVERCURRENT		false	// Use the filtered (and hence slower) current for the overcurrent fault detection
+	#define MCPWM_SLOW_ABS_OVERCURRENT		false	// Use the filtered (and hence slower) current for the overcurrent fault detection
 #endif
 #ifndef MCPWM_COMM_MODE
-#define MCPWM_COMM_MODE					COMM_MODE_INTEGRATE	// The commutation mode to use
+	#define MCPWM_COMM_MODE					COMM_MODE_INTEGRATE	// The commutation mode to use
 #endif
 #ifndef MCPWM_CYCLE_INT_LIMIT_HIGH_FAC
-#define MCPWM_CYCLE_INT_LIMIT_HIGH_FAC	0.8		// Flux integrator limit percentage at MCPWM_CYCLE_INT_START_RPM_BR ERPM
+	#define MCPWM_CYCLE_INT_LIMIT_HIGH_FAC	0.8		// Flux integrator limit percentage at MCPWM_CYCLE_INT_START_RPM_BR ERPM
 #endif
 #ifndef MCPWM_CYCLE_INT_START_RPM_BR
-#define MCPWM_CYCLE_INT_START_RPM_BR	80000.0	// RPM border between the START and LOW interval
+	#define MCPWM_CYCLE_INT_START_RPM_BR	80000.0	// RPM border between the START and LOW interval
 #endif
 #ifndef MCPWM_FAULT_STOP_TIME
-#define MCPWM_FAULT_STOP_TIME			3000	// Ignore commands for this duration in msec when faults occur
+	#define MCPWM_FAULT_STOP_TIME			3000	// Ignore commands for this duration in msec when faults occur
 #endif
 #ifndef MCPWM_LIM_TEMP_FET_START
-#define MCPWM_LIM_TEMP_FET_START		80.0	// MOSFET temperature where current limiting should begin
+	#define MCPWM_LIM_TEMP_FET_START		80.0	// MOSFET temperature where current limiting should begin
 #endif
 #ifndef MCPWM_LIM_TEMP_FET_END
-#define MCPWM_LIM_TEMP_FET_END			100.0	// MOSFET temperature where everything should be shut off
+	#define MCPWM_LIM_TEMP_FET_END			100.0	// MOSFET temperature where everything should be shut off
 #endif
 #ifndef MCPWM_LIM_TEMP_MOTOR_START
-#define MCPWM_LIM_TEMP_MOTOR_START		80.0	// MOTOR temperature where current limiting should begin
+	#define MCPWM_LIM_TEMP_MOTOR_START		80.0	// MOTOR temperature where current limiting should begin
 #endif
 #ifndef MCPWM_LIM_TEMP_MOTOR_END
-#define MCPWM_LIM_TEMP_MOTOR_END		100.0	// MOTOR temperature where everything should be shut off
+	#define MCPWM_LIM_TEMP_MOTOR_END		100.0	// MOTOR temperature where everything should be shut off
 #endif
 #ifndef MCPWM_MAX_FB_CURR_DIR_CHANGE
-#define MCPWM_MAX_FB_CURR_DIR_CHANGE	10.0	// Maximum current during full brake during which a direction change is allowed
+	#define MCPWM_MAX_FB_CURR_DIR_CHANGE	10.0	// Maximum current during full brake during which a direction change is allowed
 #endif
 
 // EEPROM settings
@@ -244,6 +249,7 @@ void conf_general_read_mc_configuration(mc_configuration *conf) {
 	if (!is_ok) {
 		conf->pwm_mode = MCPWM_PWM_MODE;
 		conf->comm_mode = MCPWM_COMM_MODE;
+		conf->motor_type = MC_DEFAULT_MOTOR_TYPE;
 
 		conf->l_current_max = MCPWM_CURRENT_MAX;
 		conf->l_current_min = MCPWM_CURRENT_MIN;

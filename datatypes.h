@@ -66,6 +66,11 @@ typedef enum {
 	CONTROL_MODE_NONE
 } mc_control_mode;
 
+typedef enum {
+	MOTOR_TYPE_BLDC = 0,
+	MOTOR_TYPE_DC,
+} mc_motor_type;
+
 typedef struct {
 	float cycle_int_limit;
 	float cycle_int_limit_running;
@@ -80,6 +85,8 @@ typedef struct {
 	// Switching and drive
 	mc_pwm_mode pwm_mode;
 	mc_comm_mode comm_mode;
+	mc_motor_type motor_type;
+
 	// Limits
 	float l_current_max;
 	float l_current_min;
@@ -127,6 +134,8 @@ typedef struct {
 	float cc_gain;
 	// Misc
 	int32_t m_fault_stop_time_ms;
+
+
 } mc_configuration;
 
 // Applications to use

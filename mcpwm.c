@@ -150,6 +150,10 @@ static void set_switching_frequency(float frequency);
 static int try_input(void);
 static void do_dc_cal(void);
 static void update_override_limits(volatile mc_configuration *conf);
+static void set_next_comm_step_bldc(int next_step);
+static void set_next_comm_step_dc(void);
+static void emergency_kill_pwm_output(void);
+
 
 // Defines
 #define IS_DETECTING()			(state == MC_STATE_DETECTING)
@@ -2358,7 +2362,24 @@ static void set_switching_frequency(float frequency) {
 	set_next_timer_settings(&timer_tmp);
 }
 
-static void set_next_comm_step(int next_step) {
+static void emergency_kill_pwm_output(void) {
+
+	TIM_SelectOCxM(TIM1, TIM_Channel_1, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM1, TIM_Channel_1, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM1, TIM_Channel_1, TIM_CCxN_Disable);
+
+	TIM_SelectOCxM(TIM1, TIM_Channel_2, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM1, TIM_Channel_2, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM1, TIM_Channel_2, TIM_CCxN_Disable);
+
+	TIM_SelectOCxM(TIM1, TIM_Channel_3, TIM_ForcedAction_InActive);
+	TIM_CCxCmd(TIM1, TIM_Channel_3, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM1, TIM_Channel_3, TIM_CCxN_Disable);
+}
+
+
+static void set_next_comm_step_bldc(int next_step) {
+
 	uint16_t positive_oc_mode = TIM_OCMode_PWM1;
 	uint16_t negative_oc_mode = TIM_OCMode_Inactive;
 
@@ -2367,6 +2388,7 @@ static void set_next_comm_step(int next_step) {
 
 	uint16_t negative_highside = TIM_CCx_Enable;
 	uint16_t negative_lowside = TIM_CCxN_Enable;
+
 
 	if (!IS_DETECTING()) {
 		switch (conf.pwm_mode) {
@@ -2577,16 +2599,87 @@ static void set_next_comm_step(int next_step) {
 		}
 	} else {
 		// Invalid phase.. stop PWM!
-		TIM_SelectOCxM(TIM1, TIM_Channel_1, TIM_ForcedAction_InActive);
-		TIM_CCxCmd(TIM1, TIM_Channel_1, TIM_CCx_Enable);
-		TIM_CCxNCmd(TIM1, TIM_Channel_1, TIM_CCxN_Disable);
+		emergency_kill_pwm_output();
+	}	
+}
 
-		TIM_SelectOCxM(TIM1, TIM_Channel_2, TIM_ForcedAction_InActive);
-		TIM_CCxCmd(TIM1, TIM_Channel_2, TIM_CCx_Enable);
-		TIM_CCxNCmd(TIM1, TIM_Channel_2, TIM_CCxN_Disable);
 
-		TIM_SelectOCxM(TIM1, TIM_Channel_3, TIM_ForcedAction_InActive);
-		TIM_CCxCmd(TIM1, TIM_Channel_3, TIM_CCx_Enable);
-		TIM_CCxNCmd(TIM1, TIM_Channel_3, TIM_CCxN_Disable);
+
+static void set_next_comm_step_dc(void) {
+
+	//TODO: implementation! Discuss with Benjamin	
+
+	uint16_t positive_oc_mode = TIM_OCMode_PWM1;
+	uint16_t negative_oc_mode = TIM_OCMode_Inactive;
+
+	uint16_t positive_highside = TIM_CCx_Enable;
+	uint16_t positive_lowside = TIM_CCxN_Enable;
+
+	uint16_t negative_highside = TIM_CCx_Enable;
+	uint16_t negative_lowside = TIM_CCxN_Enable;
+
+
+	if (!IS_DETECTING()) {
+		switch (conf.pwm_mode) {
+		case PWM_MODE_NONSYNCHRONOUS_HISW:
+			positive_lowside = TIM_CCxN_Disable;
+			break;
+
+		case PWM_MODE_SYNCHRONOUS:
+			break;
+
+		case PWM_MODE_BIPOLAR:
+			negative_oc_mode = TIM_OCMode_PWM2;
+			break;
+		}
 	}
+
+	TIM_SelectOCxM(TIM1, TIM_Channel_1, TIM_OCMode_Inactive);
+	TIM_CCxCmd(TIM1, TIM_Channel_1, TIM_CCx_Enable);
+	TIM_CCxNCmd(TIM1, TIM_Channel_1, TIM_CCxN_Disable);
+
+
+		if (direction) {
+
+			// +
+			TIM_SelectOCxM(TIM1, TIM_Channel_2, positive_oc_mode);
+			TIM_CCxCmd(TIM1, TIM_Channel_2, positive_highside);
+			TIM_CCxNCmd(TIM1, TIM_Channel_2, positive_lowside);
+
+			// -
+			TIM_SelectOCxM(TIM1, TIM_Channel_3, negative_oc_mode);
+			TIM_CCxCmd(TIM1, TIM_Channel_3, negative_highside);
+			TIM_CCxNCmd(TIM1, TIM_Channel_3, negative_lowside);
+		} else {
+			// -
+			TIM_SelectOCxM(TIM1, TIM_Channel_3, positive_oc_mode);
+			TIM_CCxCmd(TIM1, TIM_Channel_3, positive_highside);
+			TIM_CCxNCmd(TIM1, TIM_Channel_3, positive_lowside);
+
+			// +
+			TIM_SelectOCxM(TIM1, TIM_Channel_2, negative_oc_mode);
+			TIM_CCxCmd(TIM1, TIM_Channel_2, negative_highside);
+			TIM_CCxNCmd(TIM1, TIM_Channel_2, negative_lowside);
+
+		}
+
+
+}
+
+
+static void set_next_comm_step(int next_step) {
+
+	switch (conf.motor_type) {
+		case MOTOR_TYPE_BLDC:
+			set_next_comm_step_bldc(next_step);
+			break;
+		case MOTOR_TYPE_DC:
+			set_next_comm_step_dc();
+			break;
+		default:	//Invalid configuration
+			emergency_kill_pwm_output();
+			break;
+	}
+
+
 }
